@@ -8,7 +8,7 @@ Time series analysis is a collection of observations made sequentially over time
 
 ---
 
-## *** Example of time series ***
+## **Example of time series**
 
 a) ****Economic and financial time series****
 
