@@ -173,4 +173,126 @@ Where:
 
 ---
 
+## Autocorrelation and Partial Autocorrelation (ACF & PACF) Analysis
 
+Autocorrelation and partial autocorrelation are essential tools in time series analysis for understanding relationships between observations at different lags. They help identify **trend**, **seasonality**, and **stationarity** of the series.  
+
+### Interpretation of ACF and PACF – Original Series
+
+From the ACF plot of the original series, we observe that:
+
+- The autocorrelations are large and positive for many lags.  
+- The ACF decays very slowly rather than cutting off quickly.  
+- Significant spikes appear at seasonal lags (e.g., around lag 12 and 24).
+
+This slow decay pattern indicates that the series is **non-stationary**, likely due to the presence of a trend and/or seasonality.
+
+From the PACF plot:
+
+- There is a strong spike at lag 1.  
+- Additional significant spikes appear at seasonal lags.  
+- The PACF does not show a sharp cutoff after a small number of lags.
+
+**Conclusion:**  
+The original beer production series is not stationary, as evidenced by:
+
+- Slow decay in the ACF  
+- Multiple significant autocorrelations across many lags  
+- Clear seasonal structure  
+
+Therefore, **differencing is required before fitting an ARIMA model**.
+
+---
+
+### Interpretation of ACF and PACF – Differenced Series
+
+After applying first differencing, the autocorrelation structure changes significantly.
+
+#### ACF Observations:
+
+- The slow decay observed in the original series is no longer present.  
+- Most autocorrelations now fall within the confidence bounds.  
+- A significant spike remains at lag 12, indicating seasonal dependence.  
+- A few small negative spikes appear at early lags, but they decay quickly.
+
+This suggests that first differencing has successfully removed the **trend component** and improved stationarity.
+
+#### PACF Observations:
+
+- The strong persistence seen in the original series is no longer present.  
+- Several negative spikes appear at early lags.  
+- A noticeable seasonal effect is visible around lag 12.  
+- There is no clear sharp cutoff at a small lag.
+
+**Conclusion:**  
+The series appears much closer to stationarity after first differencing.  
+
+- The significant spike at lag 12 in the ACF indicates **remaining seasonal structure**.  
+- Seasonal differencing may be required.  
+- A **Seasonal ARIMA (SARIMA) model** is likely appropriate.
+
+---
+
+### Interpretation of ACF and PACF – Seasonal Differenced Series (Lag 12)
+
+After applying seasonal differencing at lag 12, the strong seasonal spike observed in the original ACF has been substantially reduced.
+
+#### ACF Observations:
+
+- The large seasonal persistence at lag 12 is no longer dominant.  
+- Most autocorrelations fall within the confidence bounds.  
+- A few small spikes remain at early lags.  
+- No slow decay pattern is visible.
+
+#### PACF Observations:
+
+- No strong or systematic cutoff pattern is visible.  
+- Most spikes lie within confidence bounds.  
+- A moderate negative spike appears at lag 12.
+
+**Conclusion:**  
+Seasonal differencing has effectively removed the annual pattern.  
+
+- If a trend was also present, **both first differencing and seasonal differencing** may be required before fitting a SARIMA model.
+
+---
+
+### Interpretation of ACF and PACF – Double Differenced Series
+
+#### ACF Analysis:
+
+- Most autocorrelations lie within the 95% confidence bounds.  
+- No slow decay pattern is visible.  
+- No strong repeating seasonal spike remains at lag 12.  
+- Autocorrelations fluctuate randomly around zero.
+
+#### PACF Analysis:
+
+- No sharp cutoff at early lags.  
+- No dominant AR structure.  
+- Most partial autocorrelations fall within the confidence interval.  
+- No systematic seasonal AR pattern remains.
+
+#### Stationarity Assessment:
+
+The absence of:
+
+- Persistent autocorrelation  
+- Seasonal spikes  
+- Slow decay patterns  
+
+indicates that the transformed series is likely **covariance-stationary**.
+
+#### Implication for Modeling:
+
+Since the double-differenced series resembles white noise:
+
+- Only small AR or MA terms may be required.  
+- Overfitting should be avoided.  
+- A **parsimonious SARIMA model** is preferred.
+
+A reasonable starting point would be:
+
+```text
+SARIMA(p,1,q)(P,1,Q)12
+```
